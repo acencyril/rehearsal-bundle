@@ -1,0 +1,17 @@
+{#- A bare page, used until the site sets rehearsal.parent_template to its own admin layout. -#}
+<!DOCTYPE html>
+<html lang="{{ app.request.locale|default('en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        body { margin: 0; font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: #18181b; background: #f6f6f7; }
+        @media (prefers-color-scheme: dark) { body { color: #e7e7ea; background: #111113; } }
+    </style>
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

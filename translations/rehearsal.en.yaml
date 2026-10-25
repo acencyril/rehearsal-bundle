@@ -1,0 +1,68 @@
+page:
+    title: 'Rehearsal'
+    lead: 'Changes proposed for this site. Try each one, then validate it or reject it with a comment.'
+    revision: 'revision %revision%'
+    link: 'Read more'
+    empty: 'No change to try right now.'
+validation:
+    manual: 'Manual validation'
+    manual_help: 'Nothing goes further until someone clicks "Validate".'
+    auto: 'Automatic validation'
+    auto_help: 'A change is validated as soon as its tests pass; without passing tests it waits for someone.'
+count:
+    pending: 'to decide'
+    validated: 'validated'
+    rejected: 'rejected'
+state:
+    pending: 'To decide'
+    validated: 'Validated'
+    rejected: 'Rejected'
+change:
+    source: 'from %source%'
+    notes: 'Notes'
+    replaced: 'Replaces'
+    check: 'What to check'
+    open: 'Open the page'
+tests:
+    title: 'Tests'
+    passed: 'Tests passed'
+    failed: 'Tests failed'
+    not_run: 'Not tested'
+    none: 'No test results for this change.'
+    output: 'Output'
+decision:
+    by: 'by %who% on %date%'
+    auto: 'automatically, tests passed, on %date%'
+    earlier: '%decision% on an earlier revision (%revision%): to decide again.'
+    change: 'Change the decision'
+form:
+    comment: 'Comment'
+    placeholder: 'Optional to validate, required to reject.'
+    validate: 'Validate'
+    reject: 'Reject'
+    reject_hint: 'A rejection needs a comment saying what is wrong.'
+history:
+    title: 'History'
+    auto: 'automatic'
+flash:
+    validated: 'Validated. The decision is recorded.'
+    rejected: 'Rejected. Your comment is recorded.'
+error:
+    unknown: 'This change is no longer proposed.'
+    comment_required: 'Say what is wrong: a rejection needs a comment.'
+    csrf: 'The form expired. Please try again.'
+    decision: 'Unknown decision.'
+mail:
+    proposed:
+        subject: '%count% change(s) to try'
+        title: '%count% change(s) to try'
+        auto: 'validated automatically'
+    decided:
+        subject:
+            validated: 'Validated: %title%'
+            rejected: 'Rejected: %title%'
+        title:
+            validated: 'Validated: %title%'
+            rejected: 'Rejected: %title%'
+    cta: 'Open Rehearsal'
+    footer: 'Sent by Rehearsal, from this site''s admin.'

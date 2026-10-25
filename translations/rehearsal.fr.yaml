@@ -1,0 +1,68 @@
+page:
+    title: 'Essais avant production'
+    lead: 'Les changements proposés pour ce site. Essayez chacun, puis validez-le ou refusez-le avec un commentaire.'
+    revision: 'révision %revision%'
+    link: 'En savoir plus'
+    empty: 'Aucun changement à essayer pour le moment.'
+validation:
+    manual: 'Validation manuelle'
+    manual_help: 'Rien ne va plus loin tant que personne n''a cliqué sur « Valider ».'
+    auto: 'Validation automatique'
+    auto_help: 'Un changement est validé dès que ses tests passent ; sans tests réussis, il attend quelqu''un.'
+count:
+    pending: 'à décider'
+    validated: 'validés'
+    rejected: 'refusés'
+state:
+    pending: 'À décider'
+    validated: 'Validé'
+    rejected: 'Refusé'
+change:
+    source: 'proposé par %source%'
+    notes: 'Notes'
+    replaced: 'Remplace'
+    check: 'À vérifier'
+    open: 'Ouvrir la page'
+tests:
+    title: 'Tests'
+    passed: 'Tests réussis'
+    failed: 'Tests en échec'
+    not_run: 'Pas testé'
+    none: 'Aucun résultat de test pour ce changement.'
+    output: 'Sortie'
+decision:
+    by: 'par %who% le %date%'
+    auto: 'automatiquement, tests réussis, le %date%'
+    earlier: '%decision% sur une révision précédente (%revision%) : à décider de nouveau.'
+    change: 'Changer la décision'
+form:
+    comment: 'Commentaire'
+    placeholder: 'Facultatif pour valider, obligatoire pour refuser.'
+    validate: 'Valider'
+    reject: 'Refuser'
+    reject_hint: 'Un refus demande un commentaire qui dit ce qui ne va pas.'
+history:
+    title: 'Historique'
+    auto: 'automatique'
+flash:
+    validated: 'Validé. La décision est enregistrée.'
+    rejected: 'Refusé. Votre commentaire est enregistré.'
+error:
+    unknown: 'Ce changement n''est plus proposé.'
+    comment_required: 'Dites ce qui ne va pas : un refus demande un commentaire.'
+    csrf: 'Le formulaire a expiré. Merci de réessayer.'
+    decision: 'Décision inconnue.'
+mail:
+    proposed:
+        subject: '%count% changement(s) à essayer'
+        title: '%count% changement(s) à essayer'
+        auto: 'validé automatiquement'
+    decided:
+        subject:
+            validated: 'Validé : %title%'
+            rejected: 'Refusé : %title%'
+        title:
+            validated: 'Validé : %title%'
+            rejected: 'Refusé : %title%'
+    cta: 'Ouvrir les essais'
+    footer: 'Envoyé par Rehearsal, depuis l''admin de ce site.'

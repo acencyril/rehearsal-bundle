@@ -1,0 +1,66 @@
+{
+    "name": "acencyril/rehearsal-bundle",
+    "type": "symfony-bundle",
+    "description": "Try a change in your Symfony admin before production: proposed changes with their notes and test results, Validate or Reject with a comment, manual or automatic validation, an event to merge and deploy.",
+    "keywords": [
+        "symfony",
+        "admin",
+        "staging",
+        "sandbox",
+        "review",
+        "approval",
+        "deployment",
+        "maintenance"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cyril",
+            "homepage": "https://github.com/acencyril"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "psr/clock": "^1.0",
+        "symfony/config": "^6.4 || ^7.0 || ^8.0",
+        "symfony/console": "^6.4 || ^7.0 || ^8.0",
+        "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+        "symfony/event-dispatcher-contracts": "^3.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0",
+        "symfony/http-kernel": "^6.4 || ^7.0 || ^8.0",
+        "symfony/routing": "^6.4 || ^7.0 || ^8.0",
+        "symfony/security-bundle": "^6.4 || ^7.0 || ^8.0",
+        "symfony/security-csrf": "^6.4 || ^7.0 || ^8.0",
+        "symfony/translation": "^6.4 || ^7.0 || ^8.0",
+        "symfony/twig-bundle": "^6.4 || ^7.0 || ^8.0"
+    },
+    "suggest": {
+        "symfony/mailer": "for the recap emails (rehearsal.mailer)",
+        "acencyril/uplift-bundle": "proposes dependency upgrades as Rehearsal changes (uplift:apply --rehearsal)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acencyril\\RehearsalBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5 || ^11.5",
+        "symfony/browser-kit": "^6.4 || ^7.0 || ^8.0",
+        "symfony/css-selector": "^6.4 || ^7.0 || ^8.0",
+        "symfony/dom-crawler": "^6.4 || ^7.0 || ^8.0",
+        "symfony/event-dispatcher": "^6.4 || ^7.0 || ^8.0",
+        "symfony/mailer": "^6.4 || ^7.0 || ^8.0",
+        "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Acencyril\\RehearsalBundle\\Tests\\": "tests/"
+        }
+    }
+}

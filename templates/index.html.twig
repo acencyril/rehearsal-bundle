@@ -1,0 +1,157 @@
+{#-
+    The Rehearsal section. It extends rehearsal.parent_template (your admin layout), which
+    must define "title" and "body". To change the markup, override this file in
+    templates/bundles/RehearsalBundle/index.html.twig, or only its "rehearsal_content"
+    or "rehearsal_styles" block.
+-#}
+{% extends parent_template %}
+{% trans_default_domain 'rehearsal' %}
+{% block title %}{{ 'page.title'|trans }}{% endblock %}
+{% block body %}
+{% set set = board.set %}
+<main class="rh" id="rehearsal">
+    {% block rehearsal_styles %}
+    <style>
+        .rh { --rh-ink: #18181b; --rh-muted: #6b6b76; --rh-line: #e4e4e8; --rh-card: #fff; --rh-ok: #157347; --rh-ok-bg: #e7f5ee; --rh-ko: #b42318; --rh-ko-bg: #fdeceb; --rh-wait: #8a5a00; --rh-wait-bg: #fdf3dc; --rh-accent: #3a5bd9;
+            max-width: 60rem; margin: 0 auto; padding: 2rem 1rem 4rem; color: var(--rh-ink); }
+        @media (prefers-color-scheme: dark) { .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; } }
+        .rh h1 { font-size: 1.6rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+        .rh h2 { font-size: 1.1rem; margin: 2rem 0 .75rem; }
+        .rh-lead, .rh-muted { color: var(--rh-muted); }
+        .rh-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 1.5rem; align-items: flex-start; }
+        .rh-meta { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; font-size: .85rem; }
+        .rh-pill { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 600; background: var(--rh-line); color: var(--rh-ink); white-space: nowrap; }
+        .rh-pill.is-validated, .rh-pill.is-passed { background: var(--rh-ok-bg); color: var(--rh-ok); }
+        .rh-pill.is-rejected, .rh-pill.is-failed { background: var(--rh-ko-bg); color: var(--rh-ko); }
+        .rh-pill.is-pending, .rh-pill.is-not_run { background: var(--rh-wait-bg); color: var(--rh-wait); }
+        .rh-flash { margin: 1rem 0; padding: .7rem 1rem; border-radius: .6rem; background: var(--rh-card); border: 1px solid var(--rh-line); font-weight: 600; }
+        .rh-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .75rem; margin: 1.5rem 0; }
+        .rh-kpi { background: var(--rh-card); border: 1px solid var(--rh-line); border-radius: .75rem; padding: .8rem 1rem; }
+        .rh-kpi b { display: block; font-size: 1.5rem; line-height: 1.2; }
+        .rh-kpi span { color: var(--rh-muted); font-size: .85rem; }
+        .rh-card, .rh-change { background: var(--rh-card); border: 1px solid var(--rh-line); border-radius: .9rem; padding: 1.1rem 1.25rem; margin: 0 0 1rem; }
+        .rh-change { border-left: 4px solid var(--rh-wait); scroll-margin-top: 5rem; }
+        .rh-change.is-validated { border-left-color: var(--rh-ok); }
+        .rh-change.is-rejected { border-left-color: var(--rh-ko); }
+        .rh-change-head { display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; align-items: baseline; }
+        .rh-change h3 { margin: 0; font-size: 1.05rem; }
+        .rh-label { display: block; margin-top: .9rem; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--rh-muted); }
+        .rh p { margin: .35rem 0; }
+        .rh a { color: var(--rh-accent); }
+        .rh-fail { margin: .4rem 0 0; padding-left: 1.2rem; color: var(--rh-ko); font-size: .9rem; }
+        .rh pre { overflow: auto; max-height: 20rem; padding: .75rem; border-radius: .5rem; background: var(--rh-line); font-size: .8rem; }
+        .rh-decision { margin-top: .9rem; padding: .6rem .8rem; border-radius: .6rem; background: var(--rh-ok-bg); }
+        .rh-decision.is-rejected { background: var(--rh-ko-bg); }
+        .rh-decision.is-earlier { background: var(--rh-line); }
+        .rh-form { display: grid; gap: .5rem; margin-top: 1rem; max-width: 40rem; }
+        .rh-form textarea { box-sizing: border-box; width: 100%; min-height: 4.5rem; padding: .6rem .7rem; font: inherit; color: inherit; background: transparent; border: 1px solid var(--rh-line); border-radius: .5rem; }
+        .rh-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .rh-btn { font: inherit; font-weight: 650; padding: .5rem 1.1rem; border-radius: .5rem; border: 1px solid transparent; cursor: pointer; }
+        .rh-btn.is-validate { background: var(--rh-ok); color: #fff; }
+        .rh-btn.is-reject { background: transparent; color: var(--rh-ko); border-color: var(--rh-ko); }
+        .rh-btn:focus-visible, .rh-form textarea:focus-visible { outline: 3px solid var(--rh-accent); outline-offset: 2px; }
+        @media (prefers-color-scheme: dark) { .rh-btn.is-validate { color: #0d1f16; } }
+        .rh-history { list-style: none; padding: 0; margin: 0; }
+        .rh-history li { padding: .5rem 0; border-bottom: 1px solid var(--rh-line); }
+    </style>
+    {% endblock %}
+
+    {% block rehearsal_content %}
+    <div class="rh-head">
+        <div>
+            <h1>{{ 'page.title'|trans }}</h1>
+            <p class="rh-lead">{{ 'page.lead'|trans }}</p>
+        </div>
+        <div class="rh-meta">
+            <span class="rh-pill" title="{{ ('validation.' ~ board.validation ~ '_help')|trans }}">{{ ('validation.' ~ board.validation)|trans }}</span>
+            {% if set.revision %}<span class="rh-muted">{{ 'page.revision'|trans({'%revision%': set.revision}) }}</span>{% endif %}
+            {% if set.link %}<a href="{{ set.link }}" rel="noopener noreferrer" target="_blank">{{ 'page.link'|trans }}</a>{% endif %}
+        </div>
+    </div>
+
+    {% for key in flashes %}<p class="rh-flash" role="status">{{ key|trans }}</p>{% endfor %}
+
+    {% if set.title %}<h2>{{ set.title }}</h2>{% endif %}
+    {% if set.summary %}<p>{{ set.summary|nl2br }}</p>{% endif %}
+
+    {% if board.items %}
+        <div class="rh-kpis">
+            <div class="rh-kpi"><b>{{ board.counts.pending }}</b><span>{{ 'count.pending'|trans }}</span></div>
+            <div class="rh-kpi"><b>{{ board.counts.validated }}</b><span>{{ 'count.validated'|trans }}</span></div>
+            <div class="rh-kpi"><b>{{ board.counts.rejected }}</b><span>{{ 'count.rejected'|trans }}</span></div>
+        </div>
+    {% endif %}
+
+    {% for item in board.items %}
+        {% set c = item.change %}
+        <article class="rh-change is-{{ item.state }}" id="change-{{ c.id }}">
+            <div class="rh-change-head">
+                <h3>{{ c.title }}</h3>
+                <div class="rh-meta">
+                    {% if c.source %}<span class="rh-muted">{{ 'change.source'|trans({'%source%': c.source}) }}</span>{% endif %}
+                    <span class="rh-pill is-{{ item.state }}">{{ ('state.' ~ item.state)|trans }}</span>
+                </div>
+            </div>
+
+            {% if c.detail %}<span class="rh-label">{{ 'change.notes'|trans }}</span><p>{{ c.detail|nl2br }}</p>{% endif %}
+            {% if c.replaced %}<span class="rh-label">{{ 'change.replaced'|trans }}</span><p>{{ c.replaced|nl2br }}</p>{% endif %}
+            {% if c.check %}<span class="rh-label">{{ 'change.check'|trans }}</span><p>{{ c.check|nl2br }}</p>{% endif %}
+            {% if c.url %}<p><a href="{{ c.url }}" target="_blank" rel="noopener">{{ 'change.open'|trans }}</a></p>{% endif %}
+
+            <span class="rh-label">{{ 'tests.title'|trans }}</span>
+            {% if c.tests %}
+                <p><span class="rh-pill is-{{ c.tests.status }}">{{ ('tests.' ~ c.tests.status)|trans }}</span>{% if c.tests.summary %} <span class="rh-muted">{{ c.tests.summary }}</span>{% endif %}{% if c.tests.at %} <span class="rh-muted">· {{ c.tests.at }}</span>{% endif %}</p>
+                {% if c.tests.failures %}<ul class="rh-fail">{% for f in c.tests.failures %}<li>{{ f }}</li>{% endfor %}</ul>{% endif %}
+                {% if c.tests.output %}<details><summary class="rh-muted">{{ 'tests.output'|trans }}</summary><pre>{{ c.tests.output }}</pre></details>{% endif %}
+            {% else %}
+                <p class="rh-muted">{{ 'tests.none'|trans }}</p>
+            {% endif %}
+
+            {% if item.decision %}
+                <div class="rh-decision is-{{ item.decision.decision }}">
+                    <strong>{{ ('state.' ~ item.decision.decision)|trans }}</strong>
+                    <span class="rh-muted">{{ (item.decision.auto ? 'decision.auto' : 'decision.by')|trans({'%who%': item.decision.by ?: '—', '%date%': item.decision.at|date('Y-m-d H:i')}) }}</span>
+                    {% if item.decision.comment %}<p>{{ item.decision.comment|nl2br }}</p>{% endif %}
+                </div>
+            {% elseif item.earlier %}
+                <div class="rh-decision is-earlier">
+                    <span class="rh-muted">{{ 'decision.earlier'|trans({'%decision%': ('state.' ~ item.earlier.decision)|trans, '%revision%': item.earlier.revision ?: '—'}) }}</span>
+                    {% if item.earlier.comment %}<p>{{ item.earlier.comment|nl2br }}</p>{% endif %}
+                </div>
+            {% endif %}
+
+            {% set form %}
+                <form class="rh-form" method="post" action="{{ path('rehearsal_decide', route_params|merge({id: c.id})) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('rehearsal-' ~ c.id) }}">
+                    <label class="rh-label" for="comment-{{ c.id }}">{{ 'form.comment'|trans }}</label>
+                    <textarea id="comment-{{ c.id }}" name="comment" maxlength="4000" placeholder="{{ 'form.placeholder'|trans }}"></textarea>
+                    <div class="rh-actions">
+                        <button class="rh-btn is-validate" type="submit" name="decision" value="validate">{{ 'form.validate'|trans }}</button>
+                        <button class="rh-btn is-reject" type="submit" name="decision" value="reject">{{ 'form.reject'|trans }}</button>
+                    </div>
+                    <p class="rh-muted">{{ 'form.reject_hint'|trans }}</p>
+                </form>
+            {% endset %}
+            {% if item.decision %}
+                <details><summary class="rh-muted">{{ 'decision.change'|trans }}</summary>{{ form }}</details>
+            {% else %}
+                {{ form }}
+            {% endif %}
+        </article>
+    {% else %}
+        <div class="rh-card"><p class="rh-muted">{{ 'page.empty'|trans }}</p></div>
+    {% endfor %}
+
+    {% if board.history %}
+        <h2>{{ 'history.title'|trans }}</h2>
+        <ul class="rh-history">
+            {% for d in board.history %}
+                <li><span class="rh-pill is-{{ d.decision }}">{{ ('state.' ~ d.decision)|trans }}</span>
+                    <span class="rh-muted">{{ d.at|date('Y-m-d H:i') }} · {{ d.change }}{% if d.revision %}@{{ d.revision }}{% endif %} · {{ d.auto ? 'history.auto'|trans : (d.by ?: '—') }}</span>
+                    {% if d.comment %}<br>{{ d.comment }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endblock %}
+</main>
+{% endblock %}
