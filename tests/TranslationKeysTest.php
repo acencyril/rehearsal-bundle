@@ -49,6 +49,11 @@ final class TranslationKeysTest extends TestCase
                 }
             }
         }
+        foreach (['summary.status.' => ['passed', 'failed', 'not_run'], 'summary.state.' => ['pending', 'validated', 'rejected'], 'summary.adoption.' => \Acencyril\RehearsalBundle\Model\Summary::ADOPTION_STATUSES, 'summary.tests_' => ['before', 'after']] as $prefix => $suffixes) {
+            foreach ($suffixes as $suffix) {
+                $used[] = $prefix.$suffix;
+            }
+        }
         array_push($used, 'validation.manual', 'validation.auto', 'validation.manual_help', 'validation.auto_help', 'decision.auto', 'decision.by');
         self::assertNotEmpty($used);
         self::assertSame([], array_values(array_diff(array_unique($used), $keys)));

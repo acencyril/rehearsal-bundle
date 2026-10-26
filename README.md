@@ -69,11 +69,53 @@ earlier decision and its comment shown.
 | `source` | who proposed it (`uplift`, `manual`…) |
 | `revision` | the code the change was tested on; defaults to the file's `revision` |
 | `tests` | `status`: `passed`, `failed` or `not_run`; `summary`, `failures`, `output`; defaults to the file's `tests` |
+| `summary` | optional facts of an upgrade, shown as a card (below) |
 | `link` (file) | where to read more, `https://` only (`pr` is read too) |
 
 Entries without a valid `id` or a `title` are ignored; a missing or broken file is an
 empty list. The older test form `{"ok": 350, "ko": 2, "failures": [...]}` (automatic
 journeys) is read as well.
+
+### The summary card (optional)
+
+A change may carry a `summary`: the facts of an upgrade. Rehearsal then shows a card
+at the top of the change, with the main move in large type, the counts, the tests, the
+deprecations fixed, the new features adopted, what the policy refused and the way
+ahead, and the decision state. Without `summary` the change looks as before.
+[Uplift](https://github.com/acencyril/uplift-bundle) fills it; any tool can. Every field
+is optional: leave out what was not measured, the card shows only what is there.
+
+```json
+"summary": {
+    "main": {"package": "symfony/*", "label": "Symfony", "from": "7.3.11", "to": "7.4.21"},
+    "php": {"from": "8.2", "to": "8.3"},
+    "packages_moved": 40,
+    "constraints_rewritten": 11,
+    "tests": {"before": "passed", "after": "passed"},
+    "deprecations_fixed": {"rules": ["RenameAttributeRector"], "files": ["src/Controller/HomeController.php"]},
+    "adoptions": [{"id": "as-command", "title": "Name commands with #[AsCommand]", "status": "applied", "places": 2}],
+    "blocked": [{"name": "doctrine/doctrine-bundle", "version": "3.3.3", "reason": "requires PHP ^8.4, the project is on 8.2"}],
+    "path_ahead": [{"name": "symfony/*", "versions": ["8.1.9"]}]
+}
+```
+
+| Field | |
+|---|---|
+| `main` | the main move: `package`, `label` (shown; defaults to `package`), `from`, `to` (versions) |
+| `php` | `from`, `to`: shown only when they differ |
+| `packages_moved`, `constraints_rewritten` | counts (packages whose locked version changed; composer.json constraints rewritten) |
+| `tests` | `before`, `after`: `passed`, `failed` or `not_run` each, both optional |
+| `deprecations_fixed` | `rules`, `files`: what was rewritten for deprecations (Rector rules, files) |
+| `adoptions` | `id`, `title`, `status` (`applied`, `untested`, `proposed`, `reverted`, `rector_failed`, `unchanged`), `places` |
+| `blocked` | moves refused by the policy: `name`, `version`, `reason` |
+| `path_ahead` | the steps left for later runs: `name`, `versions`; the main package's line reads "Then 8.1.9 in later runs" |
+
+Bad values are dropped, never guessed (a version that is not one, an unknown status).
+The card's colours are CSS variables falling back to the page's: set `--rh-sum-bg`,
+`--rh-sum-tile`, `--rh-sum-line`, `--rh-sum-ink`, `--rh-sum-muted`, `--rh-sum-accent`,
+`--rh-sum-ok`, `--rh-sum-ko`, `--rh-sum-wait` (or the page's `--rh-*`) on your admin to
+match it. Light and dark follow `prefers-color-scheme`, or `data-theme="light"` /
+`data-theme="dark"` on `<html>` when your admin sets it.
 
 ## Validation: manual or auto
 

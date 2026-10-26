@@ -14,7 +14,8 @@
     <style>
         .rh { --rh-ink: #18181b; --rh-muted: #6b6b76; --rh-line: #e4e4e8; --rh-card: #fff; --rh-ok: #157347; --rh-ok-bg: #e7f5ee; --rh-ko: #b42318; --rh-ko-bg: #fdeceb; --rh-wait: #8a5a00; --rh-wait-bg: #fdf3dc; --rh-accent: #3a5bd9;
             max-width: 60rem; margin: 0 auto; padding: 2rem 1rem 4rem; color: var(--rh-ink); }
-        @media (prefers-color-scheme: dark) { .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; } }
+        :root[data-theme="dark"] .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; }
         .rh h1 { font-size: 1.6rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
         .rh h2 { font-size: 1.1rem; margin: 2rem 0 .75rem; }
         .rh-lead, .rh-muted { color: var(--rh-muted); }
@@ -50,7 +51,39 @@
         .rh-btn.is-validate { background: var(--rh-ok); color: #fff; }
         .rh-btn.is-reject { background: transparent; color: var(--rh-ko); border-color: var(--rh-ko); }
         .rh-btn:focus-visible, .rh-form textarea:focus-visible { outline: 3px solid var(--rh-accent); outline-offset: 2px; }
-        @media (prefers-color-scheme: dark) { .rh-btn.is-validate { color: #0d1f16; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rh-btn.is-validate { color: #0d1f16; } }
+        :root[data-theme="dark"] .rh-btn.is-validate { color: #0d1f16; }
+        .rh-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        /* The summary card. Each --rh-sum-* token falls back to the page's --rh-* ones: set
+           either on your admin (light, dark, your brand) and the card follows. */
+        .rh-sum { --_bg: var(--rh-sum-bg, color-mix(in srgb, var(--rh-accent) 5%, transparent)); --_tile: var(--rh-sum-tile, var(--rh-card)); --_line: var(--rh-sum-line, var(--rh-line));
+            --_ink: var(--rh-sum-ink, var(--rh-ink)); --_muted: var(--rh-sum-muted, var(--rh-muted)); --_accent: var(--rh-sum-accent, var(--rh-accent));
+            --_ok: var(--rh-sum-ok, var(--rh-ok)); --_ko: var(--rh-sum-ko, var(--rh-ko)); --_wait: var(--rh-sum-wait, var(--rh-wait));
+            margin: .9rem 0 .4rem; padding: 1rem 1.1rem 1.1rem; border: 1px solid var(--_line); border-radius: .8rem; background: var(--_bg); color: var(--_ink); }
+        .rh .rh-sum-title { margin: 0 0 .6rem; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--_muted); }
+        .rh-sum-hero { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.5rem; margin-bottom: .9rem; }
+        .rh .rh-sum-move { display: flex; align-items: baseline; gap: .7rem; margin: 0; font-variant-numeric: tabular-nums; letter-spacing: -.03em; line-height: 1.05; }
+        .rh-sum-from { font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 650; color: var(--_muted); }
+        .rh-sum-arrow { font-size: clamp(1.3rem, 3vw, 1.8rem); color: var(--_accent); }
+        .rh-sum-to { font-size: clamp(2rem, 5.5vw, 3rem); font-weight: 750; }
+        .rh-sum-facts { flex: 1 1 16rem; min-width: 0; }
+        .rh .rh-sum-facts p { margin: .1rem 0; color: var(--_muted); }
+        .rh .rh-sum-facts .rh-sum-ahead { color: var(--_ink); font-weight: 600; }
+        .rh-sum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: .6rem; }
+        .rh-sum-tile { min-width: 0; padding: .7rem .85rem; border: 1px solid var(--_line); border-radius: .6rem; background: var(--_tile); }
+        .rh .rh-sum-tile h5 { margin: 0 0 .3rem; font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--_muted); }
+        .rh .rh-sum-tile p { margin: .15rem 0; }
+        .rh-sum-tile code { font-size: .85em; overflow-wrap: anywhere; }
+        .rh-sum-list { margin: .1rem 0 0; padding: 0; list-style: none; }
+        .rh-sum-list li { margin: .3rem 0; overflow-wrap: break-word; }
+        .rh-sum-list li + li { padding-top: .3rem; border-top: 1px dashed var(--_line); }
+        .rh-sum-name { display: block; }
+        .rh-sum-muted { color: var(--_muted); }
+        .rh-sum-st { font-weight: 600; white-space: nowrap; }
+        .rh-sum-st.is-passed, .rh-sum-st.is-applied, .rh-sum-st.is-untested, .rh-sum-st.is-validated { color: var(--_ok); }
+        .rh-sum-st.is-failed, .rh-sum-st.is-reverted, .rh-sum-st.is-rector_failed, .rh-sum-st.is-rejected { color: var(--_ko); }
+        .rh-sum-st.is-pending, .rh-sum-st.is-not_run, .rh-sum-st.is-proposed, .rh-sum-st.is-unchanged { color: var(--_wait); }
+        .rh-sum-refused { color: var(--_ko); }
         .rh-history { list-style: none; padding: 0; margin: 0; }
         .rh-history li { padding: .5rem 0; border-bottom: 1px solid var(--rh-line); }
     </style>
@@ -92,6 +125,8 @@
                     <span class="rh-pill is-{{ item.state }}">{{ ('state.' ~ item.state)|trans }}</span>
                 </div>
             </div>
+
+            {% if c.summary %}{% include '@Rehearsal/_summary.html.twig' with {s: c.summary, state: item.state, id: c.id} only %}{% endif %}
 
             {% if c.detail %}<span class="rh-label">{{ 'change.notes'|trans }}</span><p>{{ c.detail|nl2br }}</p>{% endif %}
             {% if c.replaced %}<span class="rh-label">{{ 'change.replaced'|trans }}</span><p>{{ c.replaced|nl2br }}</p>{% endif %}

@@ -56,6 +56,74 @@ final class AdminTest extends WebTestCase
         self::assertSelectorTextContains('.rh-head .rh-pill', 'Manual validation');
     }
 
+    public function testTheSummaryCardIsShownOnlyWithASummary(): void
+    {
+        $client = self::admin();
+        $crawler = $client->request('GET', '/en/admin/rehearsal');
+
+        self::assertCount(1, $crawler->filter('.rh-sum'), 'only the change carrying a summary has a card');
+        $card = $crawler->filter('#change-uplift-2026-11-02 .rh-sum');
+        self::assertSame('Upgrade summary', trim($card->filter('h4')->text()));
+        self::assertSame($card->filter('h4')->attr('id'), $card->attr('aria-labelledby'));
+        self::assertSame('7.3.11 → to 7.4.21', preg_replace('/\s+/', ' ', trim($card->filter('.rh-sum-move')->text())));
+        $text = preg_replace('/\s+/', ' ', $card->text());
+        foreach ([
+            'Symfony, 40 packages moved, 11 constraints rewritten in composer.json',
+            'Then 8.1.9 in later runs',
+            'passed after',
+            'RenameAttributeRector',
+            '1 file rewritten',
+            'Name commands with #[AsCommand] applied, tests passed · 2 places',
+            'doctrine/doctrine-bundle 3.3.3: requires PHP ^8.4',
+            'phpunit/phpunit: then 13.4.3',
+            'Waiting for a decision',
+        ] as $expected) {
+            self::assertStringContainsString($expected, $text);
+        }
+        self::assertStringNotContainsString('before', $text, 'tests before were not measured: not shown');
+        self::assertStringNotContainsString('PHP 8', $text, 'PHP did not move');
+        self::assertSame(['Project tests', 'Deprecated code fixed', 'New features', 'Refused by the policy', 'The way ahead', 'Decision'], $card->filter('h5')->each(static fn ($h) => $h->text()));
+    }
+
+    public function testTheSummaryCardFollowsTheDecision(): void
+    {
+        $client = self::admin();
+        $crawler = $client->request('GET', '/en/admin/rehearsal');
+        $client->submit($crawler->filter('#change-uplift-2026-11-02')->selectButton('Validate')->form());
+        $crawler = $client->followRedirect();
+
+        self::assertStringContainsString('Validated, decision recorded', $crawler->filter('#change-uplift-2026-11-02 .rh-sum')->text());
+    }
+
+    public function testTheSummaryCardInFrench(): void
+    {
+        $client = self::admin();
+        $crawler = $client->request('GET', '/fr/admin/rehearsal');
+        $text = preg_replace('/\s+/', ' ', $crawler->filter('.rh-sum')->text());
+
+        self::assertStringContainsString('Résumé de la montée de version', $text);
+        self::assertStringContainsString('40 paquets montés, 11 contraintes réécrites dans composer.json', $text);
+        self::assertStringContainsString('Puis 8.1.9 aux prochains passages', $text);
+        self::assertStringContainsString('verts après', $text);
+        self::assertStringContainsString('Refusé par la politique', $text);
+    }
+
+    public function testTheSummaryCardIsThemedByVariables(): void
+    {
+        $client = self::admin();
+        $client->request('GET', '/en/admin/rehearsal');
+        $html = (string) $client->getResponse()->getContent();
+
+        foreach (['--rh-sum-bg', '--rh-sum-tile', '--rh-sum-ink', '--rh-sum-ok', '--rh-sum-ko', ':root[data-theme="dark"] .rh', ':root:not([data-theme="light"]) .rh'] as $hook) {
+            self::assertStringContainsString($hook, $html);
+        }
+        preg_match_all('/\.rh-sum[^{]*\{[^}]*\}/', $html, $rules);
+        self::assertNotEmpty($rules[0]);
+        foreach ($rules[0] as $rule) {
+            self::assertDoesNotMatchRegularExpression('/(?<![-\w])(color|background):\s*#/', $rule, 'card colours come from variables: '.$rule);
+        }
+    }
+
     public function testValidateWritesTheDecisionAndDispatchesTheEvent(): void
     {
         $client = self::admin();

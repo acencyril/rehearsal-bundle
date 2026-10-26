@@ -16,6 +16,7 @@ namespace Acencyril\RehearsalBundle\Model;
  *   source    who proposed it ("uplift", "manual"…)
  *   revision  the code it was tested on; a decision holds for one revision
  *   tests     {status: passed|failed|not_run, summary, output}
+ *   summary   optional facts of an upgrade, shown as a card (see Summary)
  */
 final class Change
 {
@@ -32,6 +33,7 @@ final class Change
         public readonly string $revision = '',
         public readonly ?Tests $tests = null,
         public readonly string $proposedAt = '',
+        public readonly ?Summary $summary = null,
     ) {
     }
 
@@ -56,6 +58,7 @@ final class Change
             preg_match('/^[A-Za-z0-9._-]{1,64}$/', $revision) ? $revision : (preg_match('/^[A-Za-z0-9._-]{1,64}$/', $setRevision) ? $setRevision : ''),
             Tests::fromArray($c['tests'] ?? null) ?? $setTests,
             mb_substr((string) ($c['proposed_at'] ?? ''), 0, 40),
+            Summary::fromArray($c['summary'] ?? null),
         );
     }
 
@@ -72,6 +75,6 @@ final class Change
             'id' => $this->id, 'title' => $this->title, 'detail' => $this->detail, 'replaced' => $this->replaced,
             'check' => $this->check, 'url' => $this->url, 'source' => $this->source, 'revision' => $this->revision,
             'tests' => $this->tests?->toArray(), 'proposed_at' => $this->proposedAt,
-        ];
+        ] + (null !== $this->summary ? ['summary' => $this->summary->toArray()] : []);
     }
 }

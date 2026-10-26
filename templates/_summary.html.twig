@@ -1,0 +1,93 @@
+{#-
+    The summary card at the top of a change that carries a "summary" (an upgrade by Uplift,
+    or any tool writing the same fields). Variables: s (Summary), state (pending, validated,
+    rejected), id (the change id). Every part shows only when its facts are there.
+-#}
+{% trans_default_domain 'rehearsal' %}
+{% set mark = {passed: '✓', failed: '✗', not_run: '–'} %}
+<section class="rh-sum" aria-labelledby="sum-{{ id }}">
+    <h4 class="rh-sum-title" id="sum-{{ id }}">{{ 'summary.title'|trans }}</h4>
+
+    {% if s.main or s.php or s.packagesMoved is not null or s.constraintsRewritten is not null %}
+    <div class="rh-sum-hero">
+        {% if s.main %}
+            <p class="rh-sum-move">
+                <span class="rh-sum-from">{{ s.main.from }}</span>
+                <span class="rh-sum-arrow" aria-hidden="true">→</span> <span class="rh-sr">{{ 'summary.to'|trans }}</span>
+                <span class="rh-sum-to">{{ s.main.to }}</span>
+            </p>
+        {% endif %}
+        <div class="rh-sum-facts">
+            {% set facts = [] %}
+            {% if s.main %}{% set facts = facts|merge([s.main.label]) %}{% endif %}
+            {% if s.packagesMoved is not null %}{% set facts = facts|merge(['summary.packages_moved'|trans({'%count%': s.packagesMoved})]) %}{% endif %}
+            {% if s.constraintsRewritten is not null %}{% set facts = facts|merge(['summary.constraints'|trans({'%count%': s.constraintsRewritten})]) %}{% endif %}
+            {% if facts %}<p>{{ facts|join(', ') }}</p>{% endif %}
+            {% if s.php %}<p>{{ 'summary.php'|trans({'%from%': s.php.from, '%to%': s.php.to}) }}</p>{% endif %}
+            {% if s.mainAhead %}<p class="rh-sum-ahead">{{ 'summary.ahead_main'|trans({'%versions%': s.mainAhead|join(', ')}) }}</p>{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="rh-sum-grid">
+        {% if s.tests %}
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.tests'|trans }}</h5>
+            <p>
+                {% for when, status in s.tests %}
+                    {%- if not loop.first %} · {% endif -%}
+                    <span class="rh-sum-st is-{{ status }}"><span aria-hidden="true">{{ mark[status] }}</span> {{ ('summary.tests_' ~ when)|trans({'%status%': ('summary.status.' ~ status)|trans}) }}</span>
+                {%- endfor %}
+            </p>
+        </div>
+        {% endif %}
+
+        {% if s.deprecationsFixed %}
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.deprecations'|trans }}</h5>
+            {% if s.deprecationsFixed.rules %}<p>{{ 'summary.deprecations_rules'|trans }} {% for r in s.deprecationsFixed.rules %}<code>{{ r }}</code>{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+            {% if s.deprecationsFixed.files %}
+                <p class="rh-sum-muted">{{ 'summary.deprecations_files'|trans({'%count%': s.deprecationsFixed.files|length}) }}</p>
+                <ul class="rh-sum-list">{% for f in s.deprecationsFixed.files|slice(0, 8) %}<li><code>{{ f }}</code></li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if s.adoptions %}
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.adoptions'|trans }}</h5>
+            <ul class="rh-sum-list">
+                {% for a in s.adoptions %}
+                    <li><strong class="rh-sum-name">{{ a.title ?: a.id }}</strong>
+                        <span class="rh-sum-st is-{{ a.status }}">{{ ('summary.adoption.' ~ a.status)|trans }}</span>{% if a.places is not null %}<span class="rh-sum-muted"> · {{ 'summary.places'|trans({'%count%': a.places}) }}</span>{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if s.blocked %}
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.blocked'|trans }}</h5>
+            <ul class="rh-sum-list">
+                {% for b in s.blocked %}
+                    <li><strong class="rh-sum-refused">{{ b.name }}{% if b.version %} {{ b.version }}{% endif %}</strong>{% if b.reason %}: {{ b.reason }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if s.otherAhead %}
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.ahead'|trans }}</h5>
+            <ul class="rh-sum-list">
+                {% for p in s.otherAhead %}<li>{{ 'summary.ahead_item'|trans({'%name%': p.name, '%versions%': p.versions|join(', ')}) }}</li>{% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="rh-sum-tile">
+            <h5>{{ 'summary.decision'|trans }}</h5>
+            <p><span class="rh-sum-st is-{{ state }}"><span aria-hidden="true">{{ {pending: '●', validated: '✓', rejected: '✗'}[state] ?? '' }}</span> {{ ('summary.state.' ~ state)|trans }}</span></p>
+        </div>
+    </div>
+</section>

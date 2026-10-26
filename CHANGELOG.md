@@ -6,6 +6,19 @@ versioning follows [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-10-26
+
+### Added
+- **Upgrade summary card**: a change may carry an optional `summary` (main move, PHP
+  move, packages moved, composer.json constraints rewritten, tests before / after,
+  deprecations fixed, adoptions, moves refused by the policy, the way ahead). Rehearsal
+  then shows a card at the top of the change, with the decision state; changes without
+  it look as before. Schema in the README; Uplift 0.3 fills it.
+- The card's colours are CSS variables (`--rh-sum-*`) falling back to the page's
+  `--rh-*`; real headings, and every status said in words, not only in colour.
+- Light and dark also follow `data-theme="light"` / `data-theme="dark"` on `<html>`,
+  for admins that set their theme themselves.
+
 ## [0.1.0] — 2026-10-25
 
 First release.
@@ -31,5 +44,6 @@ First release.
 - Flex recipe: the bundle, `config/packages/rehearsal.yaml`,
   `config/routes/rehearsal.yaml`.
 
-[Unreleased]: https://github.com/acencyril/rehearsal-bundle/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/acencyril/rehearsal-bundle/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/acencyril/rehearsal-bundle/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/acencyril/rehearsal-bundle/releases/tag/v0.1.0

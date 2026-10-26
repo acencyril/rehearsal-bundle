@@ -12,7 +12,17 @@
             "check": "Open the main pages and the admin.",
             "url": "/en",
             "source": "uplift",
-            "tests": {"status": "passed", "summary": "vendor/bin/phpunit", "output": "OK (120 tests)"}
+            "tests": {"status": "passed", "summary": "vendor/bin/phpunit", "output": "OK (120 tests)"},
+            "summary": {
+                "main": {"package": "symfony/*", "label": "Symfony", "from": "7.3.11", "to": "7.4.21"},
+                "packages_moved": 40,
+                "constraints_rewritten": 11,
+                "tests": {"after": "passed"},
+                "deprecations_fixed": {"rules": ["RenameAttributeRector"], "files": ["src/Controller/HomeController.php"]},
+                "adoptions": [{"id": "as-command", "title": "Name commands with #[AsCommand]", "status": "applied", "places": 2}],
+                "blocked": [{"name": "doctrine/doctrine-bundle", "version": "3.3.3", "reason": "requires PHP ^8.4, the project is on 8.2.0"}],
+                "path_ahead": [{"name": "symfony/*", "versions": ["8.1.9"]}, {"name": "phpunit/phpunit", "versions": ["13.4.3"]}]
+            }
         },
         {
             "id": "contact-form",
