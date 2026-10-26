@@ -117,9 +117,8 @@ Les valeurs invalides sont ignorées, jamais devinées (une version qui n'en est
 un statut inconnu). Les couleurs de la carte sont des variables CSS qui retombent sur
 celles de la page : définissez `--rh-sum-bg`, `--rh-sum-tile`, `--rh-sum-line`,
 `--rh-sum-ink`, `--rh-sum-muted`, `--rh-sum-accent`, `--rh-sum-ok`, `--rh-sum-ko`,
-`--rh-sum-wait` (ou les `--rh-*` de la page) sur votre admin pour l'accorder. Clair et
-sombre suivent `prefers-color-scheme`, ou `data-theme="light"` / `data-theme="dark"`
-sur `<html>` si votre admin le pose.
+`--rh-sum-wait` sur votre admin pour donner à la carte ses propres couleurs ; sinon elle
+suit celles de la section (voir « L'apparence de la section » plus bas).
 
 ## Validation : manuelle ou automatique
 
@@ -210,6 +209,42 @@ les blocs `title` et `body` (par défaut : une page nue). Pour changer le HTML,
 surchargez `templates/bundles/RehearsalBundle/index.html.twig`, ou seulement son bloc
 `rehearsal_content` ou `rehearsal_styles`. Les textes sont des clés de traduction
 (domaine `rehearsal`, anglais et français).
+
+Le cadre de la section (en-tête, onglets, largeur) appartient à votre mise en page,
+*autour* de son bloc `body` : la section remplace le contenu de ce bloc. Elle s'affiche
+dans une `<div>`, votre mise en page garde le `<main>` de la page.
+
+### L'apparence de la section
+
+Ni CDN, ni framework. Les valeurs par défaut partent de la couleur du texte de la page
+(`currentColor`) : filets, cartes, texte secondaire et couleurs d'état en sont des
+mélanges, si bien que la section se lit sur une admin claire comme sur une sombre, dans
+la police de l'admin, quel que soit le thème du système du visiteur. Accordez-les à
+votre palette sur votre admin (`:root`, `body` ou l'enveloppe de votre mise en page) ;
+deux lignes suffisent en général :
+
+```css
+:root { --rehearsal-accent: #ff5a1f; --rehearsal-ok: #1db97a; }
+```
+
+| Propriété | Par défaut | Sert à |
+|---|---|---|
+| `--rehearsal-font` | `inherit` | tout le texte |
+| `--rehearsal-ink` | `currentColor` | le texte |
+| `--rehearsal-muted` | 64 % de la couleur du texte | libellés, texte secondaire |
+| `--rehearsal-line` | 13 % de la couleur du texte | bordures, pastilles neutres |
+| `--rehearsal-card` | 3 % de la couleur du texte | cartes, compteurs |
+| `--rehearsal-accent` | `#3a5bd9` | liens, anneau de focus, la flèche du résumé |
+| `--rehearsal-ok` | `#16a34a` | validé, tests réussis |
+| `--rehearsal-ko` | `#dc2626` | refusé, tests en échec |
+| `--rehearsal-wait` | `#d97706` | à décider |
+| `--rehearsal-ok-solid` | `#15803d` | le bouton Valider (texte blanc) |
+| `--rehearsal-max-width` | `60rem` | la largeur de la section |
+| `--rehearsal-padding` | `0` | l'espace autour de la section |
+
+Les couleurs d'état sont mélangées à la couleur du texte, ce qui les garde lisibles
+sur les deux thèmes. Une admin qui pose `data-theme="dark"` sur `<html>` reçoit des
+tons par défaut plus clairs.
 
 ### Les e-mails
 

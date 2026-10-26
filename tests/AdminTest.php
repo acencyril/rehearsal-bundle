@@ -108,13 +108,33 @@ final class AdminTest extends WebTestCase
         self::assertStringContainsString('Refusé par la politique', $text);
     }
 
+    public function testTheSectionFollowsTheHostThroughRehearsalVariables(): void
+    {
+        $client = self::admin();
+        $client->request('GET', '/en/admin/rehearsal');
+        $html = (string) $client->getResponse()->getContent();
+        preg_match('#<div class="rh" id="rehearsal">.*?<style>(.*?)</style>#s', $html, $m);
+        self::assertStringNotContainsString('<main class="rh"', $html, 'the host layout owns <main>');
+        $css = $m[1] ?? '';
+
+        foreach (['--rehearsal-ink', '--rehearsal-muted', '--rehearsal-line', '--rehearsal-card', '--rehearsal-accent', '--rehearsal-ok', '--rehearsal-ko', '--rehearsal-wait', '--rehearsal-font', '--rehearsal-max-width'] as $token) {
+            self::assertStringContainsString('var('.$token.',', $css);
+            self::assertStringContainsString('`'.$token.'`', (string) file_get_contents(\dirname(__DIR__).'/README.md'), $token.' is documented');
+        }
+        // The defaults come from the page's text colour, never from the visitor's system theme:
+        // a light-only or dark-only admin must not flip to the other palette.
+        self::assertStringContainsString('currentColor', $css);
+        self::assertStringNotContainsString('prefers-color-scheme', $css);
+        self::assertMatchesRegularExpression('/\.rh-btn\.is-validate \{ background: var\(--rh-ok-solid\); color: #fff; \}/', $css);
+    }
+
     public function testTheSummaryCardIsThemedByVariables(): void
     {
         $client = self::admin();
         $client->request('GET', '/en/admin/rehearsal');
         $html = (string) $client->getResponse()->getContent();
 
-        foreach (['--rh-sum-bg', '--rh-sum-tile', '--rh-sum-ink', '--rh-sum-ok', '--rh-sum-ko', ':root[data-theme="dark"] .rh', ':root:not([data-theme="light"]) .rh'] as $hook) {
+        foreach (['--rh-sum-bg', '--rh-sum-tile', '--rh-sum-ink', '--rh-sum-ok', '--rh-sum-ko', ':root[data-theme="dark"] .rh'] as $hook) {
             self::assertStringContainsString($hook, $html);
         }
         preg_match_all('/\.rh-sum[^{]*\{[^}]*\}/', $html, $rules);

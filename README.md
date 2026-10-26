@@ -113,9 +113,8 @@ is optional: leave out what was not measured, the card shows only what is there.
 Bad values are dropped, never guessed (a version that is not one, an unknown status).
 The card's colours are CSS variables falling back to the page's: set `--rh-sum-bg`,
 `--rh-sum-tile`, `--rh-sum-line`, `--rh-sum-ink`, `--rh-sum-muted`, `--rh-sum-accent`,
-`--rh-sum-ok`, `--rh-sum-ko`, `--rh-sum-wait` (or the page's `--rh-*`) on your admin to
-match it. Light and dark follow `prefers-color-scheme`, or `data-theme="light"` /
-`data-theme="dark"` on `<html>` when your admin sets it.
+`--rh-sum-ok`, `--rh-sum-ko`, `--rh-sum-wait` on your admin to give the card colours
+of its own; otherwise it follows the section's (see "The section's look" below).
 
 ## Validation: manual or auto
 
@@ -203,6 +202,41 @@ The section extends `parent_template`, your admin layout, which must define the
 `templates/bundles/RehearsalBundle/index.html.twig`, or only its `rehearsal_content`
 or `rehearsal_styles` block. Texts are translation keys (domain `rehearsal`, English
 and French).
+
+The section's frame (header, tabs, page width) belongs to your layout, *around* its
+`body` block: the section replaces that block's content. It renders in a `<div>`, so
+your layout keeps the page's `<main>`.
+
+### The section's look
+
+No CDN, no framework. The defaults derive from the page's own text colour
+(`currentColor`): lines, cards, muted text and the state colours are mixes of it, so
+the section reads on a light and on a dark admin alike, in the admin's font, whatever
+the visitor's system theme. Map these to your palette on your admin (`:root`, `body` or
+your layout's wrapper); two lines are usually enough:
+
+```css
+:root { --rehearsal-accent: #ff5a1f; --rehearsal-ok: #1db97a; }
+```
+
+| Property | Default | Used for |
+|---|---|---|
+| `--rehearsal-font` | `inherit` | all text |
+| `--rehearsal-ink` | `currentColor` | text |
+| `--rehearsal-muted` | 64 % of the text colour | labels, secondary text |
+| `--rehearsal-line` | 13 % of the text colour | borders, neutral pills |
+| `--rehearsal-card` | 3 % of the text colour | cards, counters |
+| `--rehearsal-accent` | `#3a5bd9` | links, focus ring, the summary's arrow |
+| `--rehearsal-ok` | `#16a34a` | validated, tests passed |
+| `--rehearsal-ko` | `#dc2626` | rejected, tests failed |
+| `--rehearsal-wait` | `#d97706` | to decide |
+| `--rehearsal-ok-solid` | `#15803d` | the Validate button (white text) |
+| `--rehearsal-max-width` | `60rem` | the section's width |
+| `--rehearsal-padding` | `0` | space around the section |
+
+State colours are mixed with the text colour, which keeps them readable on both
+themes. An admin that sets `data-theme="dark"` on `<html>` gets brighter default
+tones.
 
 ### The emails
 

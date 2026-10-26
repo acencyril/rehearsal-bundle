@@ -6,6 +6,22 @@ versioning follows [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-10-27
+
+### Changed
+- **The section blends into any admin.** Its colours are `--rehearsal-*` custom properties
+  (documented in the README, "The section's look"), whose defaults derive from the page's text
+  colour: it reads on a light and on a dark admin alike, in the admin's font.
+- It renders in a `<div>` instead of a second `<main>`, with no padding of its own
+  (`--rehearsal-padding`): the host layout owns the page's frame. The bare default page keeps
+  its spacing.
+
+### Fixed
+- The colours no longer follow the visitor's system theme on their own: on a light-only admin
+  viewed from a dark system (or a dark admin from a light one), the text was nearly invisible.
+  `data-theme="dark"` on `<html>` still brightens the tones.
+- The Validate button keeps white text on a solid green in both themes.
+
 ## [0.2.0] — 2026-10-26
 
 ### Added

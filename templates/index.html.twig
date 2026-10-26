@@ -9,13 +9,24 @@
 {% block title %}{{ 'page.title'|trans }}{% endblock %}
 {% block body %}
 {% set set = board.set %}
-<main class="rh" id="rehearsal">
+<div class="rh" id="rehearsal">
     {% block rehearsal_styles %}
     <style>
-        .rh { --rh-ink: #18181b; --rh-muted: #6b6b76; --rh-line: #e4e4e8; --rh-card: #fff; --rh-ok: #157347; --rh-ok-bg: #e7f5ee; --rh-ko: #b42318; --rh-ko-bg: #fdeceb; --rh-wait: #8a5a00; --rh-wait-bg: #fdf3dc; --rh-accent: #3a5bd9;
-            max-width: 60rem; margin: 0 auto; padding: 2rem 1rem 4rem; color: var(--rh-ink); }
-        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; } }
-        :root[data-theme="dark"] .rh { --rh-ink: #e7e7ea; --rh-muted: #a0a0ab; --rh-line: #2c2c31; --rh-card: #1a1a1d; --rh-ok: #5fd39a; --rh-ok-bg: #123324; --rh-ko: #ff8a80; --rh-ko-bg: #3a1513; --rh-wait: #f3c466; --rh-wait-bg: #33270d; --rh-accent: #8ea6ff; }
+        /* Every colour is a --rehearsal-* custom property (README, "The section's look"). The defaults
+           derive from the page's own text colour (currentColor): lines, cards, muted text and the
+           state colours are mixes of it, so the section reads on a light and on a dark admin alike,
+           in the admin's font, whatever the visitor's system theme. */
+        .rh { --rh-ink: var(--rehearsal-ink, currentColor); --rh-muted: var(--rehearsal-muted, color-mix(in srgb, currentColor 64%, transparent));
+            --rh-line: var(--rehearsal-line, color-mix(in srgb, currentColor 13%, transparent)); --rh-card: var(--rehearsal-card, color-mix(in srgb, currentColor 3%, transparent));
+            --rh-accent-tone: var(--rehearsal-accent, #3a5bd9); --rh-ok-tone: var(--rehearsal-ok, #16a34a); --rh-ko-tone: var(--rehearsal-ko, #dc2626); --rh-wait-tone: var(--rehearsal-wait, #d97706);
+            --rh-accent: color-mix(in srgb, var(--rh-accent-tone) 80%, var(--rh-ink));
+            --rh-ok: color-mix(in srgb, var(--rh-ok-tone) 72%, var(--rh-ink)); --rh-ok-bg: color-mix(in srgb, var(--rh-ok-tone) 13%, transparent);
+            --rh-ko: color-mix(in srgb, var(--rh-ko-tone) 72%, var(--rh-ink)); --rh-ko-bg: color-mix(in srgb, var(--rh-ko-tone) 13%, transparent);
+            --rh-wait: color-mix(in srgb, var(--rh-wait-tone) 72%, var(--rh-ink)); --rh-wait-bg: color-mix(in srgb, var(--rh-wait-tone) 13%, transparent);
+            --rh-ok-solid: var(--rehearsal-ok-solid, #15803d);
+            box-sizing: border-box; min-width: 0; max-width: var(--rehearsal-max-width, 60rem); margin: 0 auto; padding: var(--rehearsal-padding, 0); color: var(--rh-ink); font-family: var(--rehearsal-font, inherit); }
+        /* An admin that says it is dark gets brighter default tones. */
+        :root[data-theme="dark"] .rh { --rh-accent-tone: var(--rehearsal-accent, #8ea6ff); --rh-ok-tone: var(--rehearsal-ok, #5fd39a); --rh-ko-tone: var(--rehearsal-ko, #ff8a80); --rh-wait-tone: var(--rehearsal-wait, #f3c466); }
         .rh h1 { font-size: 1.6rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
         .rh h2 { font-size: 1.1rem; margin: 2rem 0 .75rem; }
         .rh-lead, .rh-muted { color: var(--rh-muted); }
@@ -40,7 +51,7 @@
         .rh p { margin: .35rem 0; }
         .rh a { color: var(--rh-accent); }
         .rh-fail { margin: .4rem 0 0; padding-left: 1.2rem; color: var(--rh-ko); font-size: .9rem; }
-        .rh pre { overflow: auto; max-height: 20rem; padding: .75rem; border-radius: .5rem; background: var(--rh-line); font-size: .8rem; }
+        .rh pre { overflow: auto; max-width: 100%; max-height: 20rem; padding: .75rem; border-radius: .5rem; background: var(--rh-line); font-size: .8rem; }
         .rh-decision { margin-top: .9rem; padding: .6rem .8rem; border-radius: .6rem; background: var(--rh-ok-bg); }
         .rh-decision.is-rejected { background: var(--rh-ko-bg); }
         .rh-decision.is-earlier { background: var(--rh-line); }
@@ -48,11 +59,9 @@
         .rh-form textarea { box-sizing: border-box; width: 100%; min-height: 4.5rem; padding: .6rem .7rem; font: inherit; color: inherit; background: transparent; border: 1px solid var(--rh-line); border-radius: .5rem; }
         .rh-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
         .rh-btn { font: inherit; font-weight: 650; padding: .5rem 1.1rem; border-radius: .5rem; border: 1px solid transparent; cursor: pointer; }
-        .rh-btn.is-validate { background: var(--rh-ok); color: #fff; }
+        .rh-btn.is-validate { background: var(--rh-ok-solid); color: #fff; }
         .rh-btn.is-reject { background: transparent; color: var(--rh-ko); border-color: var(--rh-ko); }
         .rh-btn:focus-visible, .rh-form textarea:focus-visible { outline: 3px solid var(--rh-accent); outline-offset: 2px; }
-        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rh-btn.is-validate { color: #0d1f16; } }
-        :root[data-theme="dark"] .rh-btn.is-validate { color: #0d1f16; }
         .rh-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
         /* The summary card. Each --rh-sum-* token falls back to the page's --rh-* ones: set
            either on your admin (light, dark, your brand) and the card follows. */
@@ -188,5 +197,5 @@
         </ul>
     {% endif %}
     {% endblock %}
-</main>
+</div>
 {% endblock %}

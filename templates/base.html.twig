@@ -7,11 +7,12 @@
     <meta name="robots" content="noindex">
     <title>{% block title %}{% endblock %}</title>
     <style>
-        body { margin: 0; font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: #18181b; background: #f6f6f7; }
+        :root { color-scheme: light dark; }
+        body { margin: 0; padding: 2rem 1rem 4rem; font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: #18181b; background: #f6f6f7; }
         @media (prefers-color-scheme: dark) { body { color: #e7e7ea; background: #111113; } }
     </style>
 </head>
 <body>
-{% block body %}{% endblock %}
+<main>{% block body %}{% endblock %}</main>
 </body>
 </html>
